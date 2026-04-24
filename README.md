@@ -28,7 +28,7 @@ The agent has access to five tools: `corpus_search` (frozen Stripe/Flask docs),
 
 | Category | Graders | Weight |
 |----------|---------|--------|
-| Deterministic (live app + Stripe API) | G1–G8, G6d | ~72% |
+| Deterministic (live app + Stripe API) | G1–G8 (incl. G6a–G6d) | ~72% |
 | Transcript analysis | G12, G13, G14, G15 | ~28% |
 | LLM-as-judge *(stretch, not yet active)* | G9–G11 | — |
 
