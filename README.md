@@ -128,8 +128,7 @@ agent-checkout-eval-harness/
 
 ## Design decisions
 
-**Frozen corpus, not live web scraping.** Stripe's docs are JS-rendered — `BeautifulSoup`
-returns shell HTML. The corpus is curated plain text, embedded in `fetch_corpus.py` and
+**Frozen corpus, not live web scraping.** The corpus is curated plain text, embedded in `fetch_corpus.py` and
 written once to `/corpus/`. Every trial runs against identical knowledge.
 
 **Anthropic SDK directly, not LiteLLM.** LiteLLM's rate limit error handling was unreliable
