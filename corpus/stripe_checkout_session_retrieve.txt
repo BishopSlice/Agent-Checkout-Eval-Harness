@@ -1,0 +1,35 @@
+Stripe Checkout Session — Retrieval and Verification
+=====================================================
+
+Retrieve a session to verify payment status or inspect parameters:
+
+    session = stripe.checkout.Session.retrieve(
+        "cs_test_...",
+        expand=["line_items", "line_items.data.price.product"],
+    )
+
+    print(session.id)
+    print(session.mode)            # "payment"
+    print(session.status)          # "open", "complete", "expired"
+    print(session.payment_status)  # "paid", "unpaid", "no_payment_required"
+    print(session.success_url)
+    print(session.cancel_url)
+    print(session.client_reference_id)
+    print(session.customer_email)
+    print(session.billing_address_collection)
+
+    # Line items (requires expand=["line_items"])
+    for item in session.line_items.data:
+        print(item.price.unit_amount)  # in cents
+        print(item.price.currency)     # "usd"
+        print(item.quantity)
+
+List recent sessions:
+
+    sessions = stripe.checkout.Session.list(limit=10)
+    for s in sessions.auto_paging_iter():
+        if s.client_reference_id == "my-run-id":
+            print(f"Found: {s.id}")
+
+After successful checkout, session.customer_details.email contains the
+email the customer entered (populated by Stripe after payment).

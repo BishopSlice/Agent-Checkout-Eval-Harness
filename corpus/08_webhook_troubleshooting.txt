@@ -1,0 +1,51 @@
+Stripe Webhook Troubleshooting — Signature Verification Failures
+================================================================
+
+If your webhook endpoint consistently returns 400 with "Invalid signature" errors,
+the most common causes are:
+
+1. WRONG SIGNING SECRET (most common)
+   STRIPE_WEBHOOK_SECRET must be the signing secret for the specific webhook
+   endpoint, copied exactly from Stripe Dashboard → Developers → Webhooks →
+   [your endpoint] → Signing secret. It starts with "whsec_".
+
+   If you're in a development or test environment, verify the value is correct:
+     import os
+     secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "NOT SET")
+     print(f"Webhook secret prefix: {secret[:12]}...")
+
+   A valid test-mode secret looks like: whsec_[60+ random base64 chars]
+   If the value looks truncated, wrong, or like a placeholder, it won't work.
+
+2. READING PARSED JSON INSTEAD OF RAW BYTES
+   Stripe signs the raw request body. You MUST use request.data (raw bytes),
+   NOT request.get_json() or request.json. Parsing the body first invalidates
+   the signature even if the secret is correct.
+
+   WRONG:  payload = request.get_json()
+   RIGHT:  payload = request.data   # raw bytes
+
+3. TIMESTAMP TOLERANCE EXCEEDED
+   stripe.Webhook.construct_event() rejects events with timestamps more than
+   5 minutes old by default. In test environments, use a fresh timestamp.
+
+4. VERIFYING THE CONFIGURATION
+   If you suspect a misconfiguration, add a startup log:
+     import os
+     secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+     if not secret or not secret.startswith("whsec_"):
+         print("WARNING: STRIPE_WEBHOOK_SECRET appears invalid or not set")
+     else:
+         print(f"Webhook secret configured: {secret[:12]}...")
+
+   If webhook verification is consistently failing even with events you signed
+   yourself using the same STRIPE_WEBHOOK_SECRET value, the secret in your
+   environment likely does not match the signing secret registered in Stripe
+   Dashboard. You cannot fix this in code — the environment variable must be
+   corrected by whoever manages the deployment configuration.
+
+5. GRACEFUL HANDLING WHEN SECRET IS WRONG
+   Your webhook handler should still return 400 for invalid signatures even
+   if the root cause is a misconfigured secret. This is correct behavior.
+   Surface the issue by logging: "Signature verification failed — check
+   STRIPE_WEBHOOK_SECRET configuration" rather than silently returning 400.

@@ -1,0 +1,58 @@
+Stripe Webhook Fulfillment and Idempotency
+==========================================
+
+After verifying a checkout.session.completed event, write a fulfillment
+record to your database.
+
+Idempotency is critical: Stripe may deliver the same event more than once
+(at-least-once delivery guarantee). Your handler MUST be idempotent —
+processing the same event twice must produce the same result as processing
+it once (one order, not two).
+
+Accessing session fields from the event:
+
+    session = event["data"]["object"]
+    session_id = session["id"]                # cs_test_...
+    customer_email = (
+        (session.get("customer_details") or {}).get("email")
+        or session.get("customer_email")
+    )
+    amount_total = session.get("amount_total")   # in cents
+
+SQLite idempotency with INSERT OR IGNORE:
+
+    import sqlite3
+
+    conn = sqlite3.connect("orders.db")
+    try:
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO orders
+                (session_id, customer_email, amount_total, created_at)
+            VALUES (?, ?, ?, datetime('now'))
+            """,
+            (session_id, customer_email, amount_total),
+        )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": "DB write failed"}), 500
+    finally:
+        conn.close()
+
+INSERT OR IGNORE silently skips the insert if session_id already exists
+(requires UNIQUE constraint on the session_id column).
+
+Required SQLite schema:
+
+    CREATE TABLE IF NOT EXISTS orders (
+        id             INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id     TEXT    NOT NULL UNIQUE,   -- UNIQUE enables idempotency
+        customer_email TEXT,
+        amount_total   INTEGER,
+        created_at     TEXT    NOT NULL DEFAULT (datetime('now'))
+    );
+
+The UNIQUE constraint on session_id means a second INSERT with the same
+session_id is silently ignored (INSERT OR IGNORE) or raises IntegrityError
+(INSERT without OR IGNORE). Either approach achieves idempotency.

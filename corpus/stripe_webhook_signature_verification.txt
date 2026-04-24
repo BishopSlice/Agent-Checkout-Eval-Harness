@@ -1,0 +1,60 @@
+Stripe Webhook Signature Verification — Python
+===============================================
+
+Stripe signs every webhook event it sends. You MUST verify this signature
+before processing any event. Never trust an event that hasn't been verified.
+
+CRITICAL: Raw body required
+----------------------------
+Stripe computes the signature over the RAW bytes of the request body.
+You MUST read the raw bytes — do NOT parse the JSON first.
+
+In Flask:
+    payload = request.data          # CORRECT: raw bytes
+    # payload = request.get_json()  # WRONG: parses JSON, breaks signature
+    # payload = request.json        # WRONG: same problem
+
+Complete webhook handler example:
+
+    import stripe
+    from flask import Flask, request, jsonify
+
+    app = Flask(__name__)
+    STRIPE_WEBHOOK_SECRET = os.environ["STRIPE_WEBHOOK_SECRET"]
+
+    @app.route("/webhook", methods=["POST"])
+    def webhook():
+        payload = request.data                              # raw bytes
+        sig_header = request.headers.get("Stripe-Signature")
+
+        if not sig_header:
+            return jsonify({"error": "Missing signature"}), 400
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, STRIPE_WEBHOOK_SECRET
+            )
+        except stripe.error.SignatureVerificationError:
+            return jsonify({"error": "Invalid signature"}), 400
+        except Exception:
+            return jsonify({"error": "Bad payload"}), 400
+
+        if event["type"] == "checkout.session.completed":
+            session = event["data"]["object"]
+            handle_checkout_completed(session)
+
+        return jsonify({"status": "ok"}), 200
+
+stripe.Webhook.construct_event() raises:
+  - stripe.error.SignatureVerificationError: signature doesn't match
+  - ValueError: payload is not valid JSON
+
+Always return 400 on signature failure. Always return 200 for unhandled
+event types (returning 4xx causes Stripe to retry the delivery).
+
+The Stripe-Signature header format:
+    t=<unix_timestamp>,v1=<hmac_sha256_signature>
+
+The STRIPE_WEBHOOK_SECRET (whsec_...) is obtained from:
+  - Stripe Dashboard → Webhooks → your endpoint → Signing secret
+  - OR Stripe CLI: stripe listen --print-secret

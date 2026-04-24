@@ -1,0 +1,38 @@
+Flask Request Body Access — Raw Bytes vs JSON
+=============================================
+
+Flask provides multiple ways to access the request body. The choice matters
+for webhook signature verification.
+
+    from flask import request
+
+    # Raw bytes (unchanged from wire):
+    raw = request.data           # bytes object
+
+    # Parsed JSON (modifies/consumes the body stream):
+    data = request.get_json()    # dict or None
+    data = request.json          # same as get_json(), property form
+
+For Stripe webhook signature verification, you MUST use request.data.
+Stripe computes the HMAC over the raw bytes of the body. If you call
+request.get_json() before reading request.data, Flask may return empty
+bytes for request.data on some versions.
+
+Safe pattern — always read raw body first:
+
+    @app.route("/webhook", methods=["POST"])
+    def webhook():
+        payload = request.data          # bytes — read this FIRST
+        sig = request.headers.get("Stripe-Signature")
+        # Now verify with stripe.Webhook.construct_event(payload, sig, secret)
+
+Do NOT do this:
+
+    def webhook():
+        body = request.get_json()       # WRONG for Stripe webhooks
+        payload = request.data          # may be empty after get_json()
+
+Flask also provides:
+    request.headers             # dict-like header access
+    request.headers.get("X-My-Header")
+    request.method              # "POST", "GET", etc.

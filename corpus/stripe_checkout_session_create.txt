@@ -1,0 +1,53 @@
+Stripe Checkout Session — Python creation pattern
+==================================================
+
+Use stripe.checkout.Session.create() to create a hosted payment page.
+
+Required parameters:
+  - mode: "payment" for one-time payments
+  - line_items: list of items with price_data or price ID
+  - success_url: URL to redirect after payment (must include {CHECKOUT_SESSION_ID})
+  - cancel_url: URL to redirect if user cancels
+
+Example (Python, stripe SDK v9+):
+
+    import stripe
+    import os
+
+    stripe.api_key = os.environ["STRIPE_SECRET_KEY"]
+
+    session = stripe.checkout.Session.create(
+        mode="payment",
+        line_items=[
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "unit_amount": 2900,          # amount in cents ($29.00)
+                    "product_data": {
+                        "name": "Premium Plan",
+                    },
+                },
+                "quantity": 1,
+            }
+        ],
+        success_url="https://yourdomain.com/success?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url="https://yourdomain.com/cancel",
+        customer_email="customer@example.com",     # optional pre-fill
+        billing_address_collection="required",     # forces email collection
+        client_reference_id="your-internal-id",   # custom ID for reconciliation
+    )
+
+    print(session.id)   # cs_test_...
+    print(session.url)  # https://checkout.stripe.com/...
+
+The {CHECKOUT_SESSION_ID} placeholder in success_url is replaced by Stripe
+with the actual session ID when the customer is redirected. This lets you
+retrieve the session to confirm payment on your success page.
+
+client_reference_id: A string you can attach to the session for internal
+tracking. Returned on the session object and on checkout.session.completed
+webhook events. Useful for linking Stripe sessions to your database records.
+
+billing_address_collection="required" ensures Stripe always collects the
+customer's email address during checkout, even if customer_email is not
+pre-filled.

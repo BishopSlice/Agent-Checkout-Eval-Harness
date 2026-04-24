@@ -1,0 +1,184 @@
+{
+  "trial_id": "380205bf-374a-4004-aa59-393f469a9b5b",
+  "run_id": "aaad1352-c90b-4775-b726-66e3dd1bc6ca",
+  "variant": "A",
+  "timestamp": "2026-04-23T07:30:33.082234+00:00",
+  "model": "claude-haiku-4-5-20251001",
+  "temperature": 0,
+  "grader_results": [
+    {
+      "grader_id": "G1",
+      "status": "fail",
+      "score": 0.0,
+      "weight": 0.12,
+      "weighted_score": 0.0,
+      "evidence": {
+        "searched": "last 100 sessions (auto-paged)",
+        "run_id": "aaad1352-c90b-4775-b726-66e3dd1bc6ca"
+      },
+      "error": null,
+      "duration_ms": 1443
+    },
+    {
+      "grader_id": "G2",
+      "status": "skipped",
+      "score": 0.0,
+      "weight": 0.1,
+      "weighted_score": 0.0,
+      "evidence": {
+        "reason": "G1 did not pass (no session_id)"
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G3",
+      "status": "skipped",
+      "score": 0.0,
+      "weight": 0.07,
+      "weighted_score": 0.0,
+      "evidence": {
+        "reason": "G1 did not pass (no session_id)"
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G4",
+      "status": "skipped",
+      "score": 0.0,
+      "weight": 0.05,
+      "weighted_score": 0.0,
+      "evidence": {
+        "reason": "G1 did not pass (no session_id)"
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G5",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.04,
+      "weighted_score": 0.04,
+      "evidence": {
+        "status_code": 400
+      },
+      "error": null,
+      "duration_ms": 3
+    },
+    {
+      "grader_id": "G6a",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "status_code": 400,
+        "response_body": "{\n  \"error\": \"Invalid signature\"\n}\n"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G6b",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "status_code": 200,
+        "response_body": "{\n  \"status\": \"ok\"\n}\n",
+        "session_id_used": "cs_test_grader_g6b_00000000"
+      },
+      "error": null,
+      "duration_ms": 3
+    },
+    {
+      "grader_id": "G6c",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.04,
+      "weighted_score": 0.04,
+      "evidence": {
+        "status_code": 200,
+        "event_type_sent": "payment_intent.created",
+        "response_body": "{\n  \"status\": \"ok\"\n}\n"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G7",
+      "status": "skipped",
+      "score": 0.0,
+      "weight": 0.1,
+      "weighted_score": 0.0,
+      "evidence": {
+        "reason": "G1 did not pass (no session_id)"
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G8",
+      "status": "skipped",
+      "score": 0.0,
+      "weight": 0.08,
+      "weighted_score": 0.0,
+      "evidence": {
+        "reason": "G1 did not pass (no session_id)"
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G12",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "corpus_search_turn": 0,
+        "first_stripe_write_turn": 2
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G13",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "last_code_write_turn": 2,
+        "verification_turn": 3
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G14",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.03,
+      "weighted_score": 0.03,
+      "evidence": {
+        "turn_count": 16
+      },
+      "error": null,
+      "duration_ms": 0
+    }
+  ],
+  "overall_score": 0.7551,
+  "pass_at_1": true,
+  "turn_count": 16,
+  "token_usage": {
+    "input_tokens": 167387,
+    "output_tokens": 3879,
+    "total_cost_usd": 0.149426
+  },
+  "failure_mode_category": "ambiguity_handling",
+  "transcript_path": "/Users/vikrantnarayan/Downloads/Projects_Claude/agent-checkout-eval-harness/trials/380205bf-374a-4004-aa59-393f469a9b5b/transcript.jsonl"
+}

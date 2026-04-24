@@ -1,0 +1,201 @@
+{
+  "trial_id": "cb172298-ff20-46cf-9aa0-a63426c708c1",
+  "run_id": "48b9bc35-0364-41a6-987f-cd242ea20ae0",
+  "variant": "A",
+  "timestamp": "2026-04-23T07:27:12.720042+00:00",
+  "model": "claude-haiku-4-5-20251001",
+  "temperature": 0,
+  "grader_results": [
+    {
+      "grader_id": "G1",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.12,
+      "weighted_score": 0.12,
+      "evidence": {
+        "session_id": "cs_test_a1ayhBbvrnFxAFsXtIjeR0o6LK0iqtin5O5IQeUagjnBLfOKlaxfd6RN6p",
+        "mode": "payment",
+        "client_reference_id": "48b9bc35-0364-41a6-987f-cd242ea20ae0",
+        "livemode": false,
+        "status": "open"
+      },
+      "error": null,
+      "duration_ms": 931
+    },
+    {
+      "grader_id": "G2",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.1,
+      "weighted_score": 0.1,
+      "evidence": {
+        "unit_amount": 2900,
+        "currency": "usd",
+        "quantity": 1,
+        "product_name": "Premium Plan",
+        "session_id": "cs_test_a1ayhBbvrnFxAFsXtIjeR0o6LK0iqtin5O5IQeUagjnBLfOKlaxfd6RN6p"
+      },
+      "error": null,
+      "duration_ms": 343
+    },
+    {
+      "grader_id": "G3",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "success_url": "http://localhost:5000/success?session_id={CHECKOUT_SESSION_ID}",
+        "cancel_url": "http://localhost:5000/cancel"
+      },
+      "error": null,
+      "duration_ms": 430
+    },
+    {
+      "grader_id": "G4",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "customer_email": null,
+        "billing_address_collection": "required",
+        "customer_creation": "if_required",
+        "pass_condition": "billing_address_collection=required"
+      },
+      "error": null,
+      "duration_ms": 370
+    },
+    {
+      "grader_id": "G5",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.04,
+      "weighted_score": 0.04,
+      "evidence": {
+        "status_code": 400
+      },
+      "error": null,
+      "duration_ms": 6
+    },
+    {
+      "grader_id": "G6a",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "status_code": 400,
+        "response_body": "{\n  \"error\": \"Invalid signature\"\n}\n"
+      },
+      "error": null,
+      "duration_ms": 4
+    },
+    {
+      "grader_id": "G6b",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "status_code": 200,
+        "response_body": "{\n  \"status\": \"ok\"\n}\n",
+        "session_id_used": "cs_test_a1ayhBbvrnFxAFsXtIjeR0o6LK0iqtin5O5IQeUagjnBLfOKlaxfd6RN6p"
+      },
+      "error": null,
+      "duration_ms": 9
+    },
+    {
+      "grader_id": "G6c",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.04,
+      "weighted_score": 0.04,
+      "evidence": {
+        "status_code": 200,
+        "event_type_sent": "payment_intent.created",
+        "response_body": "{\n  \"status\": \"ok\"\n}\n"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G7",
+      "status": "fail",
+      "score": 0.0,
+      "weight": 0.1,
+      "weighted_score": 0.0,
+      "evidence": {
+        "session_id": "cs_test_a1ayhBbvrnFxAFsXtIjeR0o6LK0iqtin5O5IQeUagjnBLfOKlaxfd6RN6p",
+        "webhook_status_code": 200,
+        "rows_found": 0,
+        "note": "Webhook returned 200 but no order record found in DB"
+      },
+      "error": null,
+      "duration_ms": 3
+    },
+    {
+      "grader_id": "G8",
+      "status": "fail",
+      "score": 0.0,
+      "weight": 0.08,
+      "weighted_score": 0.0,
+      "evidence": {
+        "session_id": "cs_test_a1ayhBbvrnFxAFsXtIjeR0o6LK0iqtin5O5IQeUagjnBLfOKlaxfd6RN6p",
+        "second_webhook_status_code": 200,
+        "rows_after_second_event": 0,
+        "note": "No rows found \u2014 G7 state may have been lost"
+      },
+      "error": null,
+      "duration_ms": 3
+    },
+    {
+      "grader_id": "G12",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "corpus_search_turn": 0,
+        "first_stripe_write_turn": 2
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G13",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "last_code_write_turn": 2,
+        "verification_turn": 3
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G14",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.03,
+      "weighted_score": 0.03,
+      "evidence": {
+        "turn_count": 25
+      },
+      "error": null,
+      "duration_ms": 0
+    }
+  ],
+  "overall_score": 0.7978,
+  "pass_at_1": true,
+  "turn_count": 25,
+  "token_usage": {
+    "input_tokens": 281164,
+    "output_tokens": 4978,
+    "total_cost_usd": 0.244843
+  },
+  "failure_mode_category": "knowledge_gap",
+  "transcript_path": "/Users/vikrantnarayan/Downloads/Projects_Claude/agent-checkout-eval-harness/trials/cb172298-ff20-46cf-9aa0-a63426c708c1/transcript.jsonl"
+}

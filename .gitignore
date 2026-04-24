@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables (real values)
+.env
+
+# Trial output — commit report.json only, ignore large artifacts
+trials/*/*/transcript.jsonl
+trials/*/*/agent_app.py
+trials/*/*/app/
+
+# SQLite databases (runtime artifacts)
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Claude Code local config
+.claude/
+
+# Test coverage
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/

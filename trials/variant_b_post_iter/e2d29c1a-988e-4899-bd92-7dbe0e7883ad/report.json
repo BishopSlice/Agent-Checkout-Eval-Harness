@@ -1,0 +1,229 @@
+{
+  "trial_id": "e2d29c1a-988e-4899-bd92-7dbe0e7883ad",
+  "run_id": "2016022f-17cc-4df9-93cc-eebd05d253b0",
+  "variant": "B",
+  "timestamp": "2026-04-23T13:08:59.632308+00:00",
+  "model": "claude-haiku-4-5-20251001",
+  "temperature": 0.3,
+  "grader_results": [
+    {
+      "grader_id": "G1",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.12,
+      "weighted_score": 0.12,
+      "evidence": {
+        "session_id": "cs_test_a17AbXwWKC8lUFphZYYTrMV1aCpN8ub5MfbMoDG9zBsGyv9XY94S59Al7m",
+        "mode": "payment",
+        "client_reference_id": "2016022f-17cc-4df9-93cc-eebd05d253b0",
+        "livemode": false,
+        "status": "open"
+      },
+      "error": null,
+      "duration_ms": 3274
+    },
+    {
+      "grader_id": "G2",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.1,
+      "weighted_score": 0.1,
+      "evidence": {
+        "unit_amount": 2900,
+        "currency": "usd",
+        "quantity": 1,
+        "product_name": "Premium Plan",
+        "session_id": "cs_test_a17AbXwWKC8lUFphZYYTrMV1aCpN8ub5MfbMoDG9zBsGyv9XY94S59Al7m"
+      },
+      "error": null,
+      "duration_ms": 372
+    },
+    {
+      "grader_id": "G3",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "success_url": "http://localhost:5000/success?session_id={CHECKOUT_SESSION_ID}",
+        "cancel_url": "http://localhost:5000/cancel"
+      },
+      "error": null,
+      "duration_ms": 332
+    },
+    {
+      "grader_id": "G4",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "customer_email": null,
+        "billing_address_collection": "required",
+        "customer_creation": "if_required",
+        "pass_condition": "billing_address_collection=required"
+      },
+      "error": null,
+      "duration_ms": 344
+    },
+    {
+      "grader_id": "G5",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.04,
+      "weighted_score": 0.04,
+      "evidence": {
+        "status_code": 400
+      },
+      "error": null,
+      "duration_ms": 4
+    },
+    {
+      "grader_id": "G6a",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "status_code": 400,
+        "response_body": "{\"error\":\"Invalid signature\"}\n"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G6b",
+      "status": "fail",
+      "score": 0.0,
+      "weight": 0.07,
+      "weighted_score": 0.0,
+      "evidence": {
+        "status_code": 400,
+        "response_body": "{\"error\":\"Invalid signature\"}\n",
+        "session_id_used": "cs_test_a17AbXwWKC8lUFphZYYTrMV1aCpN8ub5MfbMoDG9zBsGyv9XY94S59Al7m",
+        "note": "Got 400 on valid signed event. Expected in Variant B \u2014 agent's STRIPE_WEBHOOK_SECRET doesn't match the real Stripe secret. Implementation is correct; environment credential is wrong."
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G6c",
+      "status": "fail",
+      "score": 0.0,
+      "weight": 0.04,
+      "weighted_score": 0.0,
+      "evidence": {
+        "status_code": 400,
+        "event_type_sent": "payment_intent.created",
+        "response_body": "{\"error\":\"Invalid signature\"}\n",
+        "note": "Got 400 for unhandled event type. Stripe requires 200 for unknown events; returning 4xx causes retries."
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G6d",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.03,
+      "weighted_score": 0.03,
+      "evidence": {
+        "status_code": 400,
+        "response_body": "{\"error\":\"Missing signature\"}\n"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G7",
+      "status": "fail",
+      "score": 0.0,
+      "weight": 0.1,
+      "weighted_score": 0.0,
+      "evidence": {
+        "session_id": "cs_test_a17AbXwWKC8lUFphZYYTrMV1aCpN8ub5MfbMoDG9zBsGyv9XY94S59Al7m",
+        "webhook_status_code": 400,
+        "webhook_response": "{\"error\":\"Invalid signature\"}\n",
+        "note": "Webhook did not return 200; DB write likely did not happen"
+      },
+      "error": null,
+      "duration_ms": 1
+    },
+    {
+      "grader_id": "G8",
+      "status": "fail",
+      "score": 0.0,
+      "weight": 0.08,
+      "weighted_score": 0.0,
+      "evidence": {
+        "session_id": "cs_test_a17AbXwWKC8lUFphZYYTrMV1aCpN8ub5MfbMoDG9zBsGyv9XY94S59Al7m",
+        "second_webhook_status_code": 400,
+        "rows_after_second_event": 0,
+        "note": "No rows found \u2014 G7 state may have been lost"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G12",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "corpus_search_turn": 1,
+        "first_stripe_write_turn": 2
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G13",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "last_code_write_turn": 3,
+        "verification_turn": 7
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G14",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.03,
+      "weighted_score": 0.03,
+      "evidence": {
+        "turn_count": 29
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G15",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "diagnosis_found": true,
+        "detail": "Agent ran diagnostic shell command: python3 -c \"import os; s=os.environ.get('stripe_webhook_secret','not set'); print(f'webhook secret: {s[:16]}...' if len(s)>16 else f'webhook secret: {s}')\""
+      },
+      "error": null,
+      "duration_ms": 0
+    }
+  ],
+  "overall_score": 0.701,
+  "pass_at_1": false,
+  "turn_count": 29,
+  "token_usage": {
+    "input_tokens": 449068,
+    "output_tokens": 9991,
+    "total_cost_usd": 0.399218
+  },
+  "failure_mode_category": "environment_mismatch",
+  "transcript_path": "/Users/vikrantnarayan/Downloads/Projects_Claude/agent-checkout-eval-harness/trials/variant_b_post_iter/e2d29c1a-988e-4899-bd92-7dbe0e7883ad/transcript.jsonl"
+}

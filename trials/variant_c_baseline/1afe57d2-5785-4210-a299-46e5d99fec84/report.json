@@ -1,0 +1,219 @@
+{
+  "trial_id": "1afe57d2-5785-4210-a299-46e5d99fec84",
+  "run_id": "785c427f-5b47-41a9-bb7d-38b6f05696ff",
+  "variant": "C",
+  "timestamp": "2026-04-23T11:03:50.777525+00:00",
+  "model": "claude-haiku-4-5-20251001",
+  "temperature": 0.3,
+  "grader_results": [
+    {
+      "grader_id": "G1",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.12,
+      "weighted_score": 0.12,
+      "evidence": {
+        "session_id": "cs_test_a17ed3LqfWj9o2ZC7COSKlnHagu9xqfBY1Nm3Mqh4YH0PIaQPwqGaZTa5J",
+        "mode": "payment",
+        "client_reference_id": "785c427f-5b47-41a9-bb7d-38b6f05696ff",
+        "livemode": false,
+        "status": "open"
+      },
+      "error": null,
+      "duration_ms": 2981
+    },
+    {
+      "grader_id": "G2",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.1,
+      "weighted_score": 0.1,
+      "evidence": {
+        "unit_amount": 2900,
+        "currency": "usd",
+        "quantity": 1,
+        "product_name": "Premium Plan",
+        "session_id": "cs_test_a17ed3LqfWj9o2ZC7COSKlnHagu9xqfBY1Nm3Mqh4YH0PIaQPwqGaZTa5J"
+      },
+      "error": null,
+      "duration_ms": 412
+    },
+    {
+      "grader_id": "G3",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "success_url": "http://localhost:5000/success?session_id={CHECKOUT_SESSION_ID}",
+        "cancel_url": "http://localhost:5000/cancel"
+      },
+      "error": null,
+      "duration_ms": 405
+    },
+    {
+      "grader_id": "G4",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "customer_email": null,
+        "billing_address_collection": "required",
+        "customer_creation": "if_required",
+        "pass_condition": "billing_address_collection=required"
+      },
+      "error": null,
+      "duration_ms": 350
+    },
+    {
+      "grader_id": "G5",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.04,
+      "weighted_score": 0.04,
+      "evidence": {
+        "status_code": 400
+      },
+      "error": null,
+      "duration_ms": 6
+    },
+    {
+      "grader_id": "G6a",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "status_code": 400,
+        "response_body": "{\"error\":\"Invalid signature\"}\n"
+      },
+      "error": null,
+      "duration_ms": 5
+    },
+    {
+      "grader_id": "G6b",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "status_code": 200,
+        "response_body": "{\"status\":\"ok\"}\n",
+        "session_id_used": "cs_test_a17ed3LqfWj9o2ZC7COSKlnHagu9xqfBY1Nm3Mqh4YH0PIaQPwqGaZTa5J"
+      },
+      "error": null,
+      "duration_ms": 7
+    },
+    {
+      "grader_id": "G6c",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.04,
+      "weighted_score": 0.04,
+      "evidence": {
+        "status_code": 200,
+        "event_type_sent": "payment_intent.created",
+        "response_body": "{\"status\":\"ok\"}\n"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G6d",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.03,
+      "weighted_score": 0.03,
+      "evidence": {
+        "status_code": 400,
+        "response_body": "{\"error\":\"Missing signature\"}\n"
+      },
+      "error": null,
+      "duration_ms": 2
+    },
+    {
+      "grader_id": "G7",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.1,
+      "weighted_score": 0.1,
+      "evidence": {
+        "session_id": "cs_test_a17ed3LqfWj9o2ZC7COSKlnHagu9xqfBY1Nm3Mqh4YH0PIaQPwqGaZTa5J",
+        "webhook_status_code": 200,
+        "rows_found": 1,
+        "order": {
+          "id": 1,
+          "session_id": "cs_test_a17ed3LqfWj9o2ZC7COSKlnHagu9xqfBY1Nm3Mqh4YH0PIaQPwqGaZTa5J",
+          "customer_email": "grader@test.com",
+          "amount_total": 2900,
+          "created_at": "2026-04-23 11:03:50"
+        }
+      },
+      "error": null,
+      "duration_ms": 3
+    },
+    {
+      "grader_id": "G8",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.08,
+      "weighted_score": 0.08,
+      "evidence": {
+        "session_id": "cs_test_a17ed3LqfWj9o2ZC7COSKlnHagu9xqfBY1Nm3Mqh4YH0PIaQPwqGaZTa5J",
+        "second_webhook_status_code": 200,
+        "rows_after_second_event": 1
+      },
+      "error": null,
+      "duration_ms": 3
+    },
+    {
+      "grader_id": "G12",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.05,
+      "weighted_score": 0.05,
+      "evidence": {
+        "corpus_search_turn": 0,
+        "first_stripe_write_turn": 4
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G13",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.07,
+      "weighted_score": 0.07,
+      "evidence": {
+        "last_code_write_turn": 4,
+        "verification_turn": 7
+      },
+      "error": null,
+      "duration_ms": 0
+    },
+    {
+      "grader_id": "G14",
+      "status": "pass",
+      "score": 1.0,
+      "weight": 0.03,
+      "weighted_score": 0.03,
+      "evidence": {
+        "turn_count": 30
+      },
+      "error": null,
+      "duration_ms": 0
+    }
+  ],
+  "overall_score": 1.0,
+  "pass_at_1": true,
+  "turn_count": 30,
+  "token_usage": {
+    "input_tokens": 336104,
+    "output_tokens": 4411,
+    "total_cost_usd": 0.286527
+  },
+  "failure_mode_category": "none",
+  "transcript_path": "/Users/vikrantnarayan/Downloads/Projects_Claude/agent-checkout-eval-harness/trials/variant_c_baseline/1afe57d2-5785-4210-a299-46e5d99fec84/transcript.jsonl"
+}

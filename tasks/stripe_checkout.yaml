@@ -1,0 +1,282 @@
+task_id: stripe_checkout
+version: "1.0.0"
+description: >
+  Agent is given a minimal Flask skeleton with Stripe test keys pre-configured.
+  Must implement: (1) a checkout session creator endpoint, (2) a webhook handler
+  that verifies Stripe signatures using raw body, processes checkout.session.completed
+  events, and writes idempotent records to SQLite.
+
+environment:
+  python_version: "3.11"
+  installed_packages:
+    - flask==3.0.3
+    - stripe==9.12.0
+    - python-dotenv==1.0.1
+    - requests==2.32.3
+  environment_variables:
+    STRIPE_SECRET_KEY: "<injected: sk_test_...>"
+    STRIPE_WEBHOOK_SECRET: "<injected: whsec_...>"
+    FLASK_ENV: "development"
+    FLASK_APP: "app.py"
+    DATABASE_PATH: "orders.db"
+    RUN_ID: "<injected: uuid4>"
+  initial_app_state:
+    file: "app/app.py"
+    content: skeleton_variant_a
+  working_directory: "app/"
+
+tools_available:
+  corpus_search:
+    description: Semantic search over frozen Stripe/Flask documentation corpus.
+    input:
+      query: {type: string}
+      top_k: {type: integer, default: 5}
+    output:
+      results: [{passage: string, source: string, score: number}]
+
+  file_read:
+    description: Read a file relative to the agent working directory (app/).
+    input:
+      path: {type: string, description: "Path relative to app/. No traversal outside app/ allowed."}
+    output:
+      content: {type: string}
+      error: {type: string, nullable: true}
+
+  file_write:
+    description: Write or overwrite a file relative to the agent working directory (app/).
+    input:
+      path: {type: string}
+      content: {type: string}
+    output:
+      success: {type: boolean}
+      error: {type: string, nullable: true}
+
+  shell_exec:
+    description: Execute a shell command in app/ with 30s timeout.
+    input:
+      command: {type: string}
+      timeout_seconds: {type: integer, default: 30}
+    output:
+      stdout: {type: string}
+      stderr: {type: string}
+      exit_code: {type: integer}
+
+  stripe_api:
+    description: >
+      Read-only Stripe API access for verification. Do NOT use this to create
+      checkout sessions — those must be created by the Flask app itself.
+    methods: [retrieve_session, list_sessions, retrieve_payment_intent]
+    input:
+      method: {type: string, enum: [retrieve_session, list_sessions, retrieve_payment_intent]}
+      session_id: {type: string, nullable: true}
+      limit: {type: integer, default: 10, nullable: true}
+    output:
+      result: {type: object}
+      error: {type: string, nullable: true}
+
+agent_config:
+  model: "claude-sonnet-4-6"
+  temperature: 0
+  max_turns: 30
+  stop_conditions:
+    - agent_declares_done
+    - max_turns_reached
+    - three_consecutive_tool_errors
+
+task_prompt:
+  variant_a: >
+    Given a minimal Flask app with Stripe test API keys already configured,
+    implement a complete Stripe Checkout Session flow. Specifically: (1) a
+    server endpoint that creates a Stripe Checkout Session for a fixed-price
+    product ($29), configured with a success URL, cancel URL, and customer
+    email collection. (2) a webhook handler at /webhook that verifies the
+    Stripe signature using the raw request body, listens for the
+    checkout.session.completed event, and writes a fulfilled order record to
+    a local SQLite database. The webhook handler must be idempotent.
+
+  variant_b: >
+    Given a minimal Flask app with Stripe test API keys already configured,
+    implement a complete Stripe Checkout Session flow. Specifically: (1) a
+    server endpoint that creates a Stripe Checkout Session for a fixed-price
+    product ($29), configured with a success URL, cancel URL, and customer
+    email collection. (2) a webhook handler at /webhook that verifies the
+    Stripe signature using the raw request body, listens for the
+    checkout.session.completed event, and writes a fulfilled order record to
+    a local SQLite database. The webhook handler must be idempotent.
+
+  variant_c: >
+    Given a minimal Flask app with Stripe test API keys already configured,
+    implement a complete Stripe Checkout Session flow. Specifically: (1) a
+    server endpoint that creates a Stripe Checkout Session for a fixed-price
+    product ($29), configured with a success URL, cancel URL, and customer
+    email collection. (2) a webhook handler at /webhook that verifies the
+    Stripe signature using the raw request body, listens for the
+    checkout.session.completed event, and writes a fulfilled order record to
+    a local SQLite database. The webhook handler must be idempotent.
+
+variants:
+  A:
+    name: baseline
+    description: Clean environment, correct credentials, no pre-existing database.
+    environment_diffs: {}
+
+  B:
+    name: broken_webhook_secret
+    description: STRIPE_WEBHOOK_SECRET is set to an invalid value.
+    environment_diffs:
+      STRIPE_WEBHOOK_SECRET: "whsec_INVALID_VALUE_FOR_TESTING_1234567890ab"
+
+  C:
+    name: schema_conflict
+    description: Pre-existing orders.db with conflicting schema (no UNIQUE, missing columns).
+    environment_diffs:
+      pre_existing_db:
+        path: "app/orders.db"
+        schema: |
+          CREATE TABLE orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT NOT NULL,
+            amount INTEGER
+          );
+
+success_criteria:
+  pass_threshold: 0.75
+
+  graders:
+    # --- Deterministic graders (60% of total when all grader types active) ---
+    G1:
+      name: checkout_session_exists
+      type: deterministic
+      weight: 0.12
+      description: >
+        A Checkout Session exists in Stripe test mode with client_reference_id
+        equal to run_id and mode equal to "payment".
+
+    G2:
+      name: line_items_correct
+      type: deterministic
+      weight: 0.10
+      description: >
+        Line item has unit_amount=2900, currency="usd", quantity=1, non-empty
+        product name.
+
+    G3:
+      name: urls_correct
+      type: deterministic
+      weight: 0.07
+      description: >
+        success_url contains "{CHECKOUT_SESSION_ID}" placeholder; cancel_url is
+        an absolute URL.
+
+    G4:
+      name: customer_email_collected
+      type: deterministic
+      weight: 0.05
+      description: >
+        Session was created with email collection enabled: customer_email set,
+        or billing_address_collection="required", or customer_creation="always".
+
+    G5:
+      name: webhook_route_exists
+      type: deterministic
+      weight: 0.04
+      description: >
+        POST to /webhook returns a non-404 status code.
+
+    G6a:
+      name: webhook_rejects_bad_signature
+      type: deterministic
+      weight: 0.07
+      description: >
+        POST to /webhook with an invalid Stripe-Signature header returns HTTP 400.
+
+    G6b:
+      name: webhook_accepts_valid_event
+      type: deterministic
+      weight: 0.07
+      description: >
+        POST to /webhook with a correctly signed checkout.session.completed event
+        returns HTTP 200.
+
+    G6c:
+      name: webhook_ignores_unknown_event
+      type: deterministic
+      weight: 0.04
+      description: >
+        POST to /webhook with a correctly signed but unhandled event type returns
+        HTTP 200 (graceful ignore, not an error).
+
+    G6d:
+      name: webhook_rejects_missing_signature
+      type: deterministic
+      weight: 0.03
+      description: >
+        POST to /webhook with no Stripe-Signature header returns HTTP 400.
+        Distinct from G6a (wrong sig) — tests that missing header is caught
+        before verification is attempted.
+
+    G7:
+      name: db_write_on_event
+      type: deterministic
+      weight: 0.10
+      description: >
+        After a valid checkout.session.completed webhook, orders table contains
+        exactly one record with the matching session_id.
+
+    G8:
+      name: idempotency
+      type: deterministic
+      weight: 0.08
+      description: >
+        Sending the same checkout.session.completed event twice results in
+        exactly one record in orders table (not two).
+
+    # --- Transcript graders (15% of total) ---
+    G12:
+      name: doc_retrieval_behavior
+      type: transcript
+      weight: 0.05
+      description: >
+        Agent used corpus_search before writing Stripe-specific code.
+
+    G13:
+      name: self_verification_behavior
+      type: transcript
+      weight: 0.07
+      description: >
+        Agent attempted to verify its implementation after writing code (ran
+        Flask, sent a test request, or called stripe_api to inspect output).
+
+    G14:
+      name: turn_count
+      type: metric
+      weight: 0.03
+      description: >
+        Total agent turns to completion. Tracked as metric, not pass/fail.
+
+    # --- LLM-as-judge graders (25% of total — stretch, not in initial build) ---
+    G9:
+      name: stripe_sdk_patterns
+      type: llm_graded
+      weight: 0.08
+      stretch: true
+      description: >
+        Agent used current Stripe Python SDK patterns (no deprecated flows).
+
+    G10:
+      name: error_handling_quality
+      type: llm_graded
+      weight: 0.10
+      stretch: true
+      description: >
+        Error handling present for signature failure; catches
+        SignatureVerificationError explicitly and returns 400.
+
+    G11:
+      name: idempotency_in_code
+      type: llm_graded
+      weight: 0.07
+      stretch: true
+      description: >
+        Idempotency implemented in application logic (try/except on unique
+        constraint, or INSERT OR IGNORE), not just enforced by DB constraint alone.
